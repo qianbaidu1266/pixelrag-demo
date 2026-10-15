@@ -1,0 +1,16 @@
+# 模型与索引产物（体积大且可再生，见 README 重建步骤）
+models/
+paper_index/
+
+# 测试语料（CNNIC 公开报告，体积原因不入库，README 附下载地址）
+docs/
+
+# 含 DeepSeek API key，绝不入库；提交 pixelrag.yaml.example 代替
+pixelrag.yaml
+.deepseek_key
+
+# IDE / 系统
+.idea/
+.DS_Store
+__pycache__/
+*.pyc

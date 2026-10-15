@@ -1,0 +1,24 @@
+# PixelRAG 配置模板。复制为 pixelrag.yaml 后按需修改：
+#   cp pixelrag.yaml.example pixelrag.yaml
+# api_key 留空则只做检索（显示命中的图片块路径），填入 key 后自动变成完整问答。
+
+# 文档来源目录（支持 .pdf / .html / .png / .jpg / .md / .txt）
+source:
+  type: local
+  path: ./docs
+
+# 向量化模型（图文统一向量空间，本地 HuggingFace 缓存）
+embed:
+  model: Qwen/Qwen3-VL-Embedding-2B
+  device: auto   # Mac 上自动选 MPS；NVIDIA 机器选 cuda
+
+# 索引输出目录
+output: ./paper_index
+
+# 答案生成（RAG 的 "A"）。需要带视觉能力的模型——命中的是图片，纯文本模型收不了。
+answer:
+  provider: deepseek
+  model: deepseek-flash        # DeepSeek 多模态已并入正式 Flash 模型（2026-08 上线 vision）
+  api_key: ""                  # 把 sk-xxx 填在这里；优先级：yaml > .deepseek_key 文件 > 环境变量
+  top_n: 1                     # 按检索得分再送第 2、3 名命中图（可选补充线索）
+  neighbors: 1                 # 命中页前后各带 N 页一起送（相当于传统 RAG 的 chunk overlap）

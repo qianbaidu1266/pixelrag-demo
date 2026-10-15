@@ -1,0 +1,38 @@
+# PixelRAG demo 依赖清单
+# 已验证环境：macOS / Apple Silicon M1 Pro 32GB / Python 3.12.15（conda 环境名 pixelrag）
+#
+# 安装：
+#   conda create -n pixelrag python=3.12 -y
+#   conda activate pixelrag
+#   pip install --no-compile -r requirements.txt
+#
+# 两个注意点：
+#   1. 加 --no-compile 是为了不生成 .pyc，避免安全中心的批量删除保护误拦
+#      （pip 清理临时文件时单轮删除数会超过 50）。
+#   2. pdf2image 依赖系统组件 poppler，需先 brew install poppler。
+#
+# pixelrag 的 extras：index=索引与检索，pdf=PDF 渲染，serve=查询服务。
+# 本项目实际只用 index + pdf；serve 在 macOS 上加载模型时段错误，已弃用
+# （见《PixelRAG快速启动指南.md》附录踩坑记录）。
+
+pixelrag[index,pdf,serve]==0.4.0
+
+# --- 向量检索 ---
+faiss-cpu==1.15.1
+numpy==2.5.4
+
+# --- 模型与推理 ---
+# Apple Silicon 的 MPS 后端已内置在 PyPI 官方 torch wheel 中，无需额外安装
+torch==2.14.1
+torchvision==0.29.1
+transformers==5.19.0
+
+# --- 渲染与图像处理 ---
+pdf2image==1.17.0      # 需先 brew install poppler
+pymupdf==1.28.2
+pillow==12.3.0
+av==19.0.1
+
+# --- 配置读取与答案生成 ---
+PyYAML==6.0.3
+requests==2.34.2
