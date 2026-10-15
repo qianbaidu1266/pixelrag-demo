@@ -1,0 +1,15 @@
+source:
+  type: local
+  path: ./docs   # PyPI 0.4.0 的 LocalSource 只支持目录，单文件要等 main 发版
+embed:
+  model: Qwen/Qwen3-VL-Embedding-2B
+  device: auto   # Mac 上自动选 MPS
+output: ./paper_index
+
+# DeepSeek 生成答案（RAG 的 "A"）。api_key 留空则只做检索。
+answer:
+  provider: deepseek
+  model: deepseek-flash        # 多模态已并入正式 Flash 模型（2026-08 上线 vision 能力）
+  api_key: ""                  # 把 sk-xxx 填在这里
+  top_n: 1                     # 按得分送前几名命中页
+  neighbors: 1                 # 每个命中页前后各带几页（解决跨页表格/上下文被切断，类似传统 RAG 的 overlap）
