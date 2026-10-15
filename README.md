@@ -22,11 +22,11 @@ docs/*.pdf ──渲染──> 每页一张截图(tile) ──Qwen3-VL-Embedding
 pixelrag-demo/
 ├── build_index.sh            # 建索引脚本（渲染 → 切块 → 向量化）
 ├── query.py                  # 交互式问答（检索 + DeepSeek 看图生成答案）
-├── pixelrag.yaml.example     # 配置模板（复制为 pixelrag.yaml 使用）
+├── pixelrag.yaml             # 配置文件（key 需自己填）
 ├── requirements.txt          # 依赖清单（锁实测通过版本）
-├── docs/                     # 文档语料（.pdf/.html/.png/.jpg/.md/.txt，不入库）
-├── models/                   # Qwen3-VL-Embedding-2B 本地缓存（4GB，不入库）
-├── paper_index/              # 索引产物（tiles/ + index.faiss + metadata，不入库）
+├── docs/                     # 测试语料：4 份 PDF 共 259 页（CNNIC 公开报告 + PixelRAG 论文）
+├── paper_index/              # 预建索引：已向量化，clone 后可直接查询
+├── models/                   # Qwen3-VL-Embedding-2B 本地缓存（4GB，首次运行自动下载，不入库）
 └── AIDocuments/              # 原理详解 / 快速启动 / 方案对比 / 召回测试记录
 ```
 
@@ -41,28 +41,17 @@ conda create -n pixelrag python=3.12 -y
 conda activate pixelrag
 pip install --no-compile -r requirements.txt
 
-# 3. 准备语料：把 PDF 放进 docs/（CNNIC 公开报告下载地址见下）
+# 3. 配置：在 pixelrag.yaml 的 answer.api_key 里填入你的 DeepSeek API key（sk-xxx）
 
-# 4. 配置
-cp pixelrag.yaml.example pixelrag.yaml
-#    编辑 pixelrag.yaml：填入 DeepSeek API key（sk-xxx）
-
-# 5. 建索引（首次会自动下载 Qwen3-VL-Embedding-2B，约 4GB）
-./build_index.sh              # 增量：未变化的文档自动跳过
-./build_index.sh --force      # 全量重建
-
-# 6. 提问
+# 4. 直接提问（预建索引已包含 docs/ 里 4 份文档，无需重建）
 python query.py "你的问题"     # 单次问答
 python query.py               # 交互模式，模型只加载一次，q 退出
 ```
 
+首次运行会自动下载 Qwen3-VL-Embedding-2B（约 4GB）。换自己的语料：把文档放进 `docs/`，
+跑 `./build_index.sh` 增量重建（`--force` 全量重建）。
+
 没填 API key 也能跑——只做检索，输出命中的图片块路径和相似度分数。
-
-测试语料（CNNIC 公开统计报告）下载地址：
-- [第56次《中国互联网络发展状况统计报告》](https://www.cnnic.net.cn/n4/2025/0721/c88-11328.html)
-- [第57次《中国互联网络发展状况统计报告》](https://www.cnnic.net.cn/n4/2026/0205/c199-11380.html)
-- [《生成式人工智能应用发展报告(2025)》](https://www.cnnic.net.cn/n4/2025/1021/c88-11391.html)
-
 ## 实测结果（M1 Pro 32GB，4 份 PDF 共 259 页混合索引）
 
 | 问题 | 命中 | DeepSeek 答案 | 核验 |
